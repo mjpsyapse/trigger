@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import ReactDOM from 'react-dom';
 import Align from 'rc-align';
 import Animate from 'rc-animate';
 import PopupInner from './PopupInner';
@@ -41,7 +40,7 @@ class Popup extends Component {
       targetHeight: undefined,
     };
 
-    this.savePopupRef = saveRef.bind(this, 'popupInstance');
+    this.popupRef = React.createRef();
     this.saveAlignRef = saveRef.bind(this, 'alignInstance');
   }
 
@@ -93,7 +92,7 @@ class Popup extends Component {
   };
 
   getPopupDomNode() {
-    return ReactDOM.findDOMNode(this.popupInstance);
+    return this.popupRef.current && this.popupRef.current.ref.current;
   }
 
   getTargetElement = () => {
@@ -134,7 +133,6 @@ class Popup extends Component {
   }
 
   getPopupElement() {
-    const { savePopupRef } = this;
     const { stretchChecked, targetHeight, targetWidth } = this.state;
     const {
       align, visible,
@@ -184,7 +182,7 @@ class Popup extends Component {
     const popupInnerProps = {
       className,
       prefixCls,
-      ref: savePopupRef,
+      ref: this.popupRef,
       onMouseEnter,
       onMouseLeave,
       onMouseDown,
