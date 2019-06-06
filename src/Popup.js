@@ -7,6 +7,7 @@ import PopupInner from './PopupInner';
 import LazyRenderBox from './LazyRenderBox';
 import { saveRef } from './utils';
 
+
 class Popup extends Component {
   static propTypes = {
     visible: PropTypes.bool,
@@ -45,7 +46,6 @@ class Popup extends Component {
   }
 
   componentDidMount() {
-    this.rootNode = this.getPopupDomNode();
     this.setStretchSize();
   }
 
