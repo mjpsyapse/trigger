@@ -118,6 +118,7 @@ export default class Trigger extends React.Component {
     }
 
     this.triggerRef = React.createRef();
+    this.popupRef = React.createRef();
     this.prevPopupVisible = popupVisible;
 
     this.state = {
@@ -233,9 +234,9 @@ export default class Trigger extends React.Component {
     // https://github.com/react-component/trigger/pull/13
     // react bug?
     if (e.relatedTarget && !e.relatedTarget.setTimeout &&
-      this._component &&
-      this._component.getPopupDomNode &&
-      contains(this._component.getPopupDomNode(), e.relatedTarget)) {
+      this.popupRef.current &&
+      this.popupRef.current.getPopupDomNode &&
+      contains(this.popupRef.current.getPopupDomNode(), e.relatedTarget)) {
       return;
     }
     this.delaySetPopupVisible(false, this.props.mouseLeaveDelay);
@@ -337,8 +338,8 @@ export default class Trigger extends React.Component {
 
   getPopupDomNode() {
     // for test
-    if (this._component && this._component.getPopupDomNode) {
-      return this._component.getPopupDomNode();
+    if (this.popupRef.current && this.popupRef.current.getPopupDomNode) {
+      return this.popupRef.current.getPopupDomNode();
     }
     return null;
   }
@@ -418,7 +419,7 @@ export default class Trigger extends React.Component {
         transitionName={popupTransitionName}
         maskAnimation={maskAnimation}
         maskTransitionName={maskTransitionName}
-        ref={this.savePopup}
+        ref={this.popupRef}
       >
         {typeof popup === 'function' ? popup() : popup}
       </Popup>
@@ -568,8 +569,8 @@ export default class Trigger extends React.Component {
   }
 
   forcePopupAlign() {
-    if (this.state.popupVisible && this._component && this._component.alignInstance) {
-      this._component.alignInstance.forceAlign();
+    if (this.state.popupVisible && this.popupRef.current && this.popupRef.current.alignInstance) {
+      this.popupRef.current.alignInstance.forceAlign();
     }
   }
 
@@ -586,10 +587,6 @@ export default class Trigger extends React.Component {
 
   close() {
     this.setPopupVisible(false);
-  }
-
-  savePopup = (node) => {
-    this._component = node;
   }
 
   render() {
@@ -660,7 +657,7 @@ export default class Trigger extends React.Component {
 
     let portal;
     // prevent unmounting after it's rendered
-    if (popupVisible || this._component || forceRender) {
+    if (popupVisible || this.popupRef.current || forceRender) {
       portal = (
         <Portal
           key="portal"
