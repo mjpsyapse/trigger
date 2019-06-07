@@ -330,7 +330,8 @@ export default class Trigger extends React.Component {
     }
 
     const target = event.target;
-    const root = findDOMNode(this);
+
+    const root = this.getRootDomNode();
     if (!contains(root, target) && !this.hasPopupMouseDown) {
       this.close();
     }
@@ -436,7 +437,7 @@ export default class Trigger extends React.Component {
     popupContainer.style.left = '0';
     popupContainer.style.width = '100%';
     const mountNode = props.getPopupContainer ?
-      props.getPopupContainer(findDOMNode(this)) : props.getDocument().body;
+      props.getPopupContainer(this.getRootDomNode()) : props.getDocument().body;
     mountNode.appendChild(popupContainer);
     return popupContainer;
   }
