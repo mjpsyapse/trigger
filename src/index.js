@@ -117,6 +117,7 @@ export default class Trigger extends React.Component {
       popupVisible = !!props.defaultPopupVisible;
     }
 
+    this.triggerRef = React.createRef();
     this.prevPopupVisible = popupVisible;
 
     this.state = {
@@ -343,7 +344,11 @@ export default class Trigger extends React.Component {
   }
 
   getRootDomNode = () => {
-    return findDOMNode(this);
+    if (IS_REACT_16) {
+      return this.triggerRef.current;
+    }
+    const node = findDOMNode(this);
+    return node;
   }
 
   getPopupClassNameFromAlign = (align) => {
@@ -591,7 +596,7 @@ export default class Trigger extends React.Component {
     const { popupVisible } = this.state;
     const { children, forceRender, alignPoint, className } = this.props;
     const child = React.Children.only(children);
-    const newChildProps = { key: 'trigger' };
+    const newChildProps = { key: 'trigger', ref: this.triggerRef };
 
     if (this.isContextMenuToShow()) {
       newChildProps.onContextMenu = this.onContextMenu;
