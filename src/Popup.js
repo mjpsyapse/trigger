@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Align from 'rc-align';
+import Align from '@mjpsyapse/rc-align';
 import Animate from 'rc-animate';
 import PopupInner from './PopupInner';
 import LazyRenderBox from './LazyRenderBox';
@@ -24,6 +24,7 @@ class Popup extends Component {
     onTouchStart: PropTypes.func,
     stretch: PropTypes.string,
     children: PropTypes.node,
+    ref: PropTypes.any,
     point: PropTypes.shape({
       pageX: PropTypes.number,
       pageY: PropTypes.number,
@@ -40,8 +41,7 @@ class Popup extends Component {
       targetHeight: undefined,
     };
 
-    this.popupRef = React.createRef();
-    this.saveAlignRef = saveRef.bind(this, 'alignInstance');
+    this.popupRef = this.props.ref || React.createRef();
   }
 
   componentDidMount() {
@@ -92,6 +92,7 @@ class Popup extends Component {
   };
 
   getPopupDomNode() {
+    console.log('-----', this.popupRef.current);
     return this.popupRef.current && this.popupRef.current.ref.current;
   }
 
@@ -182,7 +183,6 @@ class Popup extends Component {
     const popupInnerProps = {
       className,
       prefixCls,
-      ref: this.popupRef,
       onMouseEnter,
       onMouseLeave,
       onMouseDown,
@@ -201,7 +201,7 @@ class Popup extends Component {
             <Align
               target={this.getAlignTarget()}
               key="popup"
-              ref={this.saveAlignRef}
+              forwardedRef={this.popupRef} // align passes ref to child
               monitorWindowResize
               align={align}
               onAlign={this.onAlign}
@@ -229,7 +229,7 @@ class Popup extends Component {
         <Align
           target={this.getAlignTarget()}
           key="popup"
-          ref={this.saveAlignRef}
+          forwardedRef={this.popupRef} // align passes ref to child
           monitorWindowResize
           xVisible={visible}
           childrenProps={{ visible: 'xVisible' }}

@@ -75,6 +75,7 @@ export default class Trigger extends React.Component {
       PropTypes.string,
       PropTypes.object,
     ]),
+    ref: PropTypes.any,
     maskAnimation: PropTypes.string,
     stretch: PropTypes.string,
     alignPoint: PropTypes.bool, // Maybe we can support user pass position in the future
@@ -117,7 +118,7 @@ export default class Trigger extends React.Component {
       popupVisible = !!props.defaultPopupVisible;
     }
 
-    this.triggerRef = React.createRef();
+    this.triggerRef = props.ref || React.createRef();
     this.popupRef = React.createRef();
     this.prevPopupVisible = popupVisible;
 
@@ -346,11 +347,7 @@ export default class Trigger extends React.Component {
   }
 
   getRootDomNode = () => {
-    if (IS_REACT_16) {
-      return this.triggerRef.current;
-    }
-    const node = findDOMNode(this);
-    return node;
+    return this.triggerRef.current;
   }
 
   getPopupClassNameFromAlign = (align) => {

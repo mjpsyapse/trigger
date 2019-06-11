@@ -56,10 +56,10 @@
     "lint"
   ],
   "dependencies": {
+    "@mjpsyapse/rc-align": "^2.4.10",
     "babel-runtime": "6.x",
     "classnames": "^2.2.6",
     "prop-types": "15.x",
-    "@mjpsyapse/rc-align": "^2.4.0",
     "rc-animate": "2.x",
     "rc-util": "^4.4.0"
   }

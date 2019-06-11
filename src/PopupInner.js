@@ -12,10 +12,11 @@ class PopupInner extends Component {
     onMouseDown: PropTypes.func,
     onTouchStart: PropTypes.func,
     children: PropTypes.any,
+    forwardedRef: PropTypes.any
   };
   constructor(props) {
     super(props);
-    this.ref = React.createRef();
+    this.ref = props.forwardedRef || React.createRef();
   }
   render() {
     const props = this.props;
@@ -23,6 +24,7 @@ class PopupInner extends Component {
     if (!props.visible) {
       className += ` ${props.hiddenClassName}`;
     }
+
     return (
       <div
         className={className}
