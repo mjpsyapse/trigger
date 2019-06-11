@@ -12,13 +12,19 @@ class PopupInner extends Component {
     onMouseDown: PropTypes.func,
     onTouchStart: PropTypes.func,
     children: PropTypes.any,
+    forwardedRef: PropTypes.any,
   };
+  constructor(props) {
+    super(props);
+    this.ref = props.forwardedRef || React.createRef();
+  }
   render() {
     const props = this.props;
     let className = props.className;
     if (!props.visible) {
       className += ` ${props.hiddenClassName}`;
     }
+
     return (
       <div
         className={className}
@@ -27,6 +33,7 @@ class PopupInner extends Component {
         onMouseDown={props.onMouseDown}
         onTouchStart={props.onTouchStart}
         style={props.style}
+        ref={this.ref}
       >
         <LazyRenderBox className={`${props.prefixCls}-content`} visible={props.visible}>
           {props.children}

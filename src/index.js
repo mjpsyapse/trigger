@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { findDOMNode, createPortal } from 'react-dom';
+import { createPortal } from 'react-dom';
 import contains from 'rc-util/lib/Dom/contains';
 import addEventListener from 'rc-util/lib/Dom/addEventListener';
 import ContainerRender from 'rc-util/lib/ContainerRender';
@@ -75,6 +75,7 @@ export default class Trigger extends React.Component {
       PropTypes.string,
       PropTypes.object,
     ]),
+    forwardedRef: PropTypes.any,
     maskAnimation: PropTypes.string,
     stretch: PropTypes.string,
     alignPoint: PropTypes.bool, // Maybe we can support user pass position in the future
@@ -117,6 +118,8 @@ export default class Trigger extends React.Component {
       popupVisible = !!props.defaultPopupVisible;
     }
 
+    this.triggerRef = props.forwardedRef || React.createRef();
+    this.popupRef = React.createRef();
     this.prevPopupVisible = popupVisible;
 
     this.state = {
@@ -232,9 +235,9 @@ export default class Trigger extends React.Component {
     // https://github.com/react-component/trigger/pull/13
     // react bug?
     if (e.relatedTarget && !e.relatedTarget.setTimeout &&
-      this._component &&
-      this._component.getPopupDomNode &&
-      contains(this._component.getPopupDomNode(), e.relatedTarget)) {
+      this.popupRef.current &&
+      this.popupRef.current.getPopupDomNode &&
+      contains(this.popupRef.current.getPopupDomNode(), e.relatedTarget)) {
       return;
     }
     this.delaySetPopupVisible(false, this.props.mouseLeaveDelay);
@@ -328,7 +331,8 @@ export default class Trigger extends React.Component {
     }
 
     const target = event.target;
-    const root = findDOMNode(this);
+
+    const root = this.getRootDomNode();
     if (!contains(root, target) && !this.hasPopupMouseDown) {
       this.close();
     }
@@ -336,14 +340,19 @@ export default class Trigger extends React.Component {
 
   getPopupDomNode() {
     // for test
-    if (this._component && this._component.getPopupDomNode) {
-      return this._component.getPopupDomNode();
+    if (this.popupRef.current && this.popupRef.current.getPopupDomNode) {
+      return this.popupRef.current.getPopupDomNode();
     }
     return null;
   }
 
   getRootDomNode = () => {
-    return findDOMNode(this);
+    let node = this.triggerRef.current;
+    // support nested triggers
+    while (node.triggerRef) {
+      node = node.triggerRef.current;
+    }
+    return node;
   }
 
   getPopupClassNameFromAlign = (align) => {
@@ -413,7 +422,7 @@ export default class Trigger extends React.Component {
         transitionName={popupTransitionName}
         maskAnimation={maskAnimation}
         maskTransitionName={maskTransitionName}
-        ref={this.savePopup}
+        ref={this.popupRef}
       >
         {typeof popup === 'function' ? popup() : popup}
       </Popup>
@@ -430,7 +439,7 @@ export default class Trigger extends React.Component {
     popupContainer.style.left = '0';
     popupContainer.style.width = '100%';
     const mountNode = props.getPopupContainer ?
-      props.getPopupContainer(findDOMNode(this)) : props.getDocument().body;
+      props.getPopupContainer(this.getRootDomNode()) : props.getDocument().body;
     mountNode.appendChild(popupContainer);
     return popupContainer;
   }
@@ -563,8 +572,8 @@ export default class Trigger extends React.Component {
   }
 
   forcePopupAlign() {
-    if (this.state.popupVisible && this._component && this._component.alignInstance) {
-      this._component.alignInstance.forceAlign();
+    if (this.state.popupVisible && this.popupRef.current && this.popupRef.current.alignInstance) {
+      this.popupRef.current.alignInstance.forceAlign();
     }
   }
 
@@ -583,15 +592,11 @@ export default class Trigger extends React.Component {
     this.setPopupVisible(false);
   }
 
-  savePopup = (node) => {
-    this._component = node;
-  }
-
   render() {
     const { popupVisible } = this.state;
     const { children, forceRender, alignPoint, className } = this.props;
     const child = React.Children.only(children);
-    const newChildProps = { key: 'trigger' };
+    const newChildProps = { key: 'trigger', ref: this.triggerRef };
 
     if (this.isContextMenuToShow()) {
       newChildProps.onContextMenu = this.onContextMenu;
@@ -655,7 +660,7 @@ export default class Trigger extends React.Component {
 
     let portal;
     // prevent unmounting after it's rendered
-    if (popupVisible || this._component || forceRender) {
+    if (popupVisible || this.popupRef.current || forceRender) {
       portal = (
         <Portal
           key="portal"

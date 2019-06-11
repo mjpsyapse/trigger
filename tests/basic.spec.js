@@ -82,13 +82,17 @@ const placementAlignMap = {
 
 describe('rc-trigger', function main() {
   this.timeout(40000);
-  const div = document.createElement('div');
-  div.style.margin = '100px';
-  div.style.position = 'relative';
-  document.body.insertBefore(div, document.body.firstChild);
+  let div;
+  beforeEach(() => {
+    div = document.createElement('div');
+    div.style.margin = '100px';
+    div.style.position = 'relative';
+    document.body.insertBefore(div, document.body.firstChild);
+  });
 
   afterEach(() => {
     ReactDOM.unmountComponentAtNode(div);
+    document.body.removeChild(div);
   });
 
   describe('getPopupContainer', () => {
@@ -101,9 +105,9 @@ describe('rc-trigger', function main() {
         >
           <div className="target">click</div>
         </Trigger>), div);
-      const domNode = ReactDOM.findDOMNode(trigger);
+      const domNode = document.querySelector('.target');
       Simulate.click(domNode);
-      async.series([timeout(20), (next) => {
+      async.series([timeout(200), (next) => {
         const popupDomNode = trigger.getPopupDomNode();
         expect(popupDomNode.parentNode.parentNode.parentNode).to.be(document.body);
         next();
@@ -262,21 +266,20 @@ describe('rc-trigger', function main() {
         constructor(props) {
           super(props);
 
-          this.saveClickTriggerRef = saveRef.bind(this, 'clickTriggerInstance');
-          this.saveHoverTriggerRef = saveRef.bind(this, 'hoverTriggerInstance');
+          this.clickRef = React.createRef();
+          this.hoverRef = React.createRef();
         }
         render() {
           return (
             <Trigger
               action={['click']}
               popupAlign={placementAlignMap.left}
-              ref={this.saveClickTriggerRef}
+              ref={this.clickRef}
               popup={<strong>click trigger</strong>}
             >
               <Trigger
                 action={['hover']}
                 popupAlign={placementAlignMap.left}
-                ref={this.saveHoverTriggerRef}
                 popup={<strong>hover trigger</strong>}
               >
                 <div className="target">trigger</div>
@@ -290,21 +293,23 @@ describe('rc-trigger', function main() {
       const target = scryRenderedDOMComponentsWithClass(trigger, 'target')[0];
       // can not simulate mouseenter
       Simulate.mouseEnter(target);
+      const clickTriggerElement = trigger.clickRef.current;
+      const hoverTriggerElement = clickTriggerElement.triggerRef.current;
       Simulate.click(target);
       async.series([timeout(200), (next) => {
-        const clickPopupDomNode = trigger.clickTriggerInstance.getPopupDomNode();
-        const hoverPopupDomNode = trigger.hoverTriggerInstance.getPopupDomNode();
+        const clickPopupDomNode = clickTriggerElement.popupRef.current.getPopupDomNode();
+        const hoverPopupDomNode = hoverTriggerElement.popupRef.current.getPopupDomNode();
         expect(clickPopupDomNode).to.be.ok();
         expect(hoverPopupDomNode).to.be.ok();
         Simulate.mouseLeave(target);
         next();
       }, timeout(200), (next) => {
-        const hoverPopupDomNode = trigger.hoverTriggerInstance.getPopupDomNode();
+        const hoverPopupDomNode = hoverTriggerElement.popupRef.current.getPopupDomNode();
         expect($(hoverPopupDomNode).css('display')).to.be('none');
         Simulate.click(target);
         next();
       }, timeout(200), (next) => {
-        const clickPopupDomNode = trigger.clickTriggerInstance.getPopupDomNode();
+        const clickPopupDomNode = clickTriggerElement.popupRef.current.getPopupDomNode();
         expect($(clickPopupDomNode).css('display')).to.be('none');
         next();
       }], done);
