@@ -2,8 +2,8 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Trigger from 'rc-trigger';
-import 'rc-trigger/assets/index.less';
+import Trigger from '@mjpsyapse/rc-trigger';
+import '@mjpsyapse/rc-trigger/assets/index.less';
 import './point.less';
 
 const builtinPlacements = {
