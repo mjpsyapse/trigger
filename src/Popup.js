@@ -4,7 +4,6 @@ import Align from '@mjpsyapse/rc-align';
 import Animate from 'rc-animate';
 import PopupInner from './PopupInner';
 import LazyRenderBox from './LazyRenderBox';
-import { saveRef } from './utils';
 
 
 class Popup extends Component {
@@ -92,7 +91,6 @@ class Popup extends Component {
   };
 
   getPopupDomNode() {
-    console.log('-----', this.popupRef.current);
     return this.popupRef.current && this.popupRef.current.ref.current;
   }
 

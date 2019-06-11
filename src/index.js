@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { findDOMNode, createPortal } from 'react-dom';
+import { createPortal } from 'react-dom';
 import contains from 'rc-util/lib/Dom/contains';
 import addEventListener from 'rc-util/lib/Dom/addEventListener';
 import ContainerRender from 'rc-util/lib/ContainerRender';
@@ -75,7 +75,7 @@ export default class Trigger extends React.Component {
       PropTypes.string,
       PropTypes.object,
     ]),
-    ref: PropTypes.any,
+    forwardedRef: PropTypes.any,
     maskAnimation: PropTypes.string,
     stretch: PropTypes.string,
     alignPoint: PropTypes.bool, // Maybe we can support user pass position in the future
@@ -118,7 +118,7 @@ export default class Trigger extends React.Component {
       popupVisible = !!props.defaultPopupVisible;
     }
 
-    this.triggerRef = props.ref || React.createRef();
+    this.triggerRef = props.forwardedRef || React.createRef();
     this.popupRef = React.createRef();
     this.prevPopupVisible = popupVisible;
 
@@ -347,7 +347,12 @@ export default class Trigger extends React.Component {
   }
 
   getRootDomNode = () => {
-    return this.triggerRef.current;
+    let node = this.triggerRef.current;
+    // support nested triggers
+    while (node.triggerRef) {
+      node = node.triggerRef.current;
+    }
+    return node;
   }
 
   getPopupClassNameFromAlign = (align) => {

@@ -12,7 +12,7 @@ class PopupInner extends Component {
     onMouseDown: PropTypes.func,
     onTouchStart: PropTypes.func,
     children: PropTypes.any,
-    forwardedRef: PropTypes.any
+    forwardedRef: PropTypes.any,
   };
   constructor(props) {
     super(props);
