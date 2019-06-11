@@ -56,11 +56,11 @@
     "lint"
   ],
   "dependencies": {
-    "@mjpsyapse/rc-align": "^2.4.10",
+    "@mjpsyapse/rc-align": "^2.4.11",
     "babel-runtime": "6.x",
     "classnames": "^2.2.6",
     "prop-types": "15.x",
-    "rc-animate": "2.x",
-    "rc-util": "^4.4.0"
+    "rc-util": "^4.4.0",
+    "react-addons-css-transition-group": "^15.6.2"
   }
 }

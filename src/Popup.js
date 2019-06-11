@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Align from '@mjpsyapse/rc-align';
-import Animate from 'rc-animate';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import PopupInner from './PopupInner';
 import LazyRenderBox from './LazyRenderBox';
 
@@ -15,6 +15,7 @@ class Popup extends Component {
     getRootDomNode: PropTypes.func,
     align: PropTypes.any,
     destroyPopupOnHide: PropTypes.bool,
+    maskTransitionName: PropTypes.string,
     className: PropTypes.string,
     prefixCls: PropTypes.string,
     onMouseEnter: PropTypes.func,
@@ -124,7 +125,7 @@ class Popup extends Component {
     if (!transitionName && props.animation) {
       transitionName = `${props.prefixCls}-${props.animation}`;
     }
-    return transitionName;
+    return transitionName || 'enter';
   }
 
   getClassName(currentAlignClassName) {
@@ -188,11 +189,15 @@ class Popup extends Component {
       style: newStyle,
     };
     if (destroyPopupOnHide) {
+      if (!visible) {
+        this.popupRef.current = null;
+      }
       return (
-        <Animate
-          component=""
-          exclusive
+        <ReactCSSTransitionGroup
           transitionAppear
+          transitionAppearTimeout={200}
+          transitionEnterTimeout={200}
+          transitionLeaveTimeout={200}
           transitionName={this.getTransitionName()}
         >
           {visible ? (
@@ -212,17 +217,17 @@ class Popup extends Component {
               </PopupInner>
             </Align>
           ) : null}
-        </Animate>
+        </ReactCSSTransitionGroup>
       );
     }
 
     return (
-      <Animate
-        component=""
-        exclusive
+      <ReactCSSTransitionGroup
         transitionAppear
+        transitionAppearTimeout={200}
+        transitionEnterTimeout={200}
+        transitionLeaveTimeout={200}
         transitionName={this.getTransitionName()}
-        showProp="xVisible"
       >
         <Align
           target={this.getAlignTarget()}
@@ -242,7 +247,7 @@ class Popup extends Component {
             {children}
           </PopupInner>
         </Align>
-      </Animate>
+      </ReactCSSTransitionGroup>
     );
   }
 
@@ -271,15 +276,16 @@ class Popup extends Component {
       );
       if (maskTransition) {
         maskElement = (
-          <Animate
+          <ReactCSSTransitionGroup
             key="mask"
-            showProp="visible"
             transitionAppear
-            component=""
+            transitionAppearTimeout={200}
+            transitionEnterTimeout={200}
+            transitionLeaveTimeout={200}
             transitionName={maskTransition}
           >
             {maskElement}
-          </Animate>
+          </ReactCSSTransitionGroup>
         );
       }
     }

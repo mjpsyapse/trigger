@@ -109,7 +109,7 @@ describe('rc-trigger', function main() {
       Simulate.click(domNode);
       async.series([timeout(200), (next) => {
         const popupDomNode = trigger.getPopupDomNode();
-        expect(popupDomNode.parentNode.parentNode.parentNode).to.be(document.body);
+        expect(popupDomNode.parentNode.parentNode.parentNode.parentNode).to.be(document.body);
         next();
       }], done);
     });
@@ -132,7 +132,7 @@ describe('rc-trigger', function main() {
       Simulate.click(domNode);
       async.series([timeout(20), (next) => {
         const popupDomNode = trigger.getPopupDomNode();
-        expect(popupDomNode.parentNode.parentNode.parentNode).to.be(div);
+        expect(popupDomNode.parentNode.parentNode.parentNode.parentNode).to.be(div);
         next();
       }], done);
     });
@@ -624,9 +624,11 @@ describe('rc-trigger', function main() {
     });
 
     it('set true will destroy tooltip on hide', () => {
+      const ref = React.createRef();
       const trigger = ReactDOM.render(
         <Trigger
           action={['click']}
+          ref={ref}
           destroyPopupOnHide
           popupAlign={placementAlignMap.topRight}
           popup={<strong>trigger</strong>}
