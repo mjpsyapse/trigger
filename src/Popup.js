@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Align from '@mjpsyapse/rc-align';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import { CSSTransition } from 'react-transition-group';
 import PopupInner from './PopupInner';
 import LazyRenderBox from './LazyRenderBox';
 
@@ -189,45 +189,44 @@ class Popup extends Component {
       style: newStyle,
     };
     if (destroyPopupOnHide) {
-      if (!visible) {
-        this.popupRef.current = null;
-      }
-      return (
-        <ReactCSSTransitionGroup
-          transitionAppear
-          transitionAppearTimeout={200}
-          transitionEnterTimeout={200}
-          transitionLeaveTimeout={200}
-          transitionName={this.getTransitionName()}
-        >
-          {visible ? (
-            <Align
-              target={this.getAlignTarget()}
-              key="popup"
-              forwardedRef={this.popupRef} // align passes ref to child
-              monitorWindowResize
-              align={align}
-              onAlign={this.onAlign}
-            >
-              <PopupInner
-                visible
-                {...popupInnerProps}
+      if (visible) {
+        return (
+          <CSSTransition
+            transitionappear
+            transitionappeartimeout={200}
+            transitionentertimeout={200}
+            transitionleavetimeout={200}
+            transitionname={this.getTransitionName()}
+          >
+              <Align
+                target={this.getAlignTarget()}
+                key="popup"
+                forwardedRef={this.popupRef} // align passes ref to child
+                monitorWindowResize
+                align={align}
+                onAlign={this.onAlign}
               >
-                {children}
-              </PopupInner>
-            </Align>
-          ) : null}
-        </ReactCSSTransitionGroup>
-      );
+                <PopupInner
+                  visible
+                  {...popupInnerProps}
+                >
+                  {children}
+                </PopupInner>
+              </Align>
+          </CSSTransition>
+        );
+      }
+      this.popupRef.current = null;
+      return null;
     }
 
     return (
-      <ReactCSSTransitionGroup
-        transitionAppear
-        transitionAppearTimeout={200}
-        transitionEnterTimeout={200}
-        transitionLeaveTimeout={200}
-        transitionName={this.getTransitionName()}
+      <CSSTransition
+        transitionappear
+        transitionappeartimeout={200}
+        transitionentertimeout={200}
+        transitionleavetimeout={200}
+        transitionname={this.getTransitionName()}
       >
         <Align
           target={this.getAlignTarget()}
@@ -247,7 +246,7 @@ class Popup extends Component {
             {children}
           </PopupInner>
         </Align>
-      </ReactCSSTransitionGroup>
+      </CSSTransition>
     );
   }
 
@@ -276,16 +275,16 @@ class Popup extends Component {
       );
       if (maskTransition) {
         maskElement = (
-          <ReactCSSTransitionGroup
+          <CSSTransition
             key="mask"
-            transitionAppear
-            transitionAppearTimeout={200}
-            transitionEnterTimeout={200}
-            transitionLeaveTimeout={200}
-            transitionName={maskTransition}
+            transitionappear
+            transitionappeartimeout={200}
+            transitionentertimeout={200}
+            transitionleavetimeout={200}
+            transitionname={maskTransition}
           >
             {maskElement}
-          </ReactCSSTransitionGroup>
+          </CSSTransition>
         );
       }
     }
