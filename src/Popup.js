@@ -125,7 +125,7 @@ class Popup extends Component {
     if (!transitionName && props.animation) {
       transitionName = `${props.prefixCls}-${props.animation}`;
     }
-    return transitionName || 'enter';
+    return transitionName;
   }
 
   getClassName(currentAlignClassName) {
@@ -192,7 +192,6 @@ class Popup extends Component {
       if (visible) {
         return (
           <CSSTransition
-            transitionappear
             transitionappeartimeout={200}
             transitionentertimeout={200}
             transitionleavetimeout={200}
@@ -222,7 +221,6 @@ class Popup extends Component {
 
     return (
       <CSSTransition
-        transitionappear
         transitionappeartimeout={200}
         transitionentertimeout={200}
         transitionleavetimeout={200}
@@ -277,7 +275,6 @@ class Popup extends Component {
         maskElement = (
           <CSSTransition
             key="mask"
-            transitionappear
             transitionappeartimeout={200}
             transitionentertimeout={200}
             transitionleavetimeout={200}
