@@ -196,6 +196,7 @@ class Popup extends Component {
             transitionentertimeout={200}
             transitionleavetimeout={200}
             transitionname={this.getTransitionName()}
+            timeout={200}
           >
               <Align
                 target={this.getAlignTarget()}
@@ -225,6 +226,7 @@ class Popup extends Component {
         transitionentertimeout={200}
         transitionleavetimeout={200}
         transitionname={this.getTransitionName()}
+        timeout={200}
       >
         <Align
           target={this.getAlignTarget()}
@@ -279,6 +281,7 @@ class Popup extends Component {
             transitionentertimeout={200}
             transitionleavetimeout={200}
             transitionname={maskTransition}
+            timeout={200}
           >
             {maskElement}
           </CSSTransition>
